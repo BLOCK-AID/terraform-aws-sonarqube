@@ -15,9 +15,33 @@ Check valid versions on:
 * Github Releases: <https://github.com/cn-terraform/terraform-aws-sonarqube/releases>
 * Terraform Module Registry: <https://registry.terraform.io/modules/cn-terraform/sonarqube/aws>
 
+## Architecture
+This deployment will create the following AWS services that require specific VPC requirements such as:
+- 2 Availability Zones
+- Public and Private Subnets
+
+Thereform a Terraform script has been created to generate a VPC with these specific requirements located in GitHub at:
+https://github.com/BLOCK-AID/terraform-vpc-tools
+
+Once you have an AWS VPC available, the following services will be deploy along with the SonarQube Docker image:
+- Aurora Postgres Cluster (Serverless RDS) with 2 instances
+- Elastic Container Service (Serverless) using Fargate
+
+The resulting architecture is shown below:
+<img src="images/aws-sonarqube.png" width="1000" height="450">
+
 ## Install pre commit hooks.
 
-Pleas run this command right after cloning the repository.
+WHY?  The goal of pre-commit hooks is to improve the quality of commits. This is achieved by making sure your commits meet some (formal) requirements, e.g:
+
+- that they comply to a certain coding style (with the hook style-files).
+- that you commit derivatives such as README.md or .Rd files with their source instead of spreading them over multiple commits.
+and so on.
+
+As all changes enter a repository history with a commit, we believe many checks should be performed at that point, and not only later on a CI service. For example, creating auto-commits at a CI service for styling code creates unnecessary extra commits, as styling can be checked at the time of committing and is relatively inexpensive.
+
+
+Please run this command right after cloning the repository.
 
         pre-commit install
 
@@ -49,7 +73,7 @@ In order to run all checks at any point run the following command:
 |------|--------|---------|
 | <a name="module_aws_cw_logs"></a> [aws\_cw\_logs](#module\_aws\_cw\_logs) | cn-terraform/cloudwatch-logs/aws | 1.0.8 |
 | <a name="module_ecs_fargate"></a> [ecs\_fargate](#module\_ecs\_fargate) | cn-terraform/ecs-fargate/aws | 2.0.30 |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | terraform-aws-modules/vpc/aws | n/a |
+| <a name="module_vpc"></a> [vpc](https://github.com/BLOCK-AID/terraform-vpc-tools) | BLOCK-AID/terraform-vpc-tools | n/a |
 
 ## Resources
 
@@ -67,8 +91,8 @@ In order to run all checks at any point run the following command:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_db_engine_version"></a> [db\_engine\_version](#input\_db\_engine\_version) | DB engine version | `string` | `"11.7"` | no |
-| <a name="input_db_instance_size"></a> [db\_instance\_size](#input\_db\_instance\_size) | DB instance size | `string` | `"db.r4.large"` | no |
+| <a name="input_db_engine_version"></a> [db\_engine\_version](#input\_db\_engine\_version) | DB engine version | `string` | `"12.10"` | no |
+| <a name="input_db_instance_size"></a> [db\_instance\_size](#input\_db\_instance\_size) | DB instance size | `string` | `"db.r5.large"` | no |
 | <a name="input_db_name"></a> [db\_name](#input\_db\_name) | Default DB name | `string` | `"sonar"` | no |
 | <a name="input_db_password"></a> [db\_password](#input\_db\_password) | DB password | `string` | `""` | no |
 | <a name="input_db_username"></a> [db\_username](#input\_db\_username) | Default DB username | `string` | `"sonar"` | no |
